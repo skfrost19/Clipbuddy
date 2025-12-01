@@ -59,8 +59,8 @@ uv run main.py
 
 | Action | Hotkey |
 |--------|--------|
-| Open clipboard overlay | `Ctrl+G` |
-| Cycle to next item | `Ctrl+G` (while overlay is open) |
+| Open clipboard overlay | `Ctrl+Q` |
+| Cycle to next item | `Ctrl+Q` (while overlay is open) |
 | Paste selected item | Release `Ctrl` |
 | Close overlay | `Esc` |
 | Navigate items | Arrow keys |
@@ -69,8 +69,8 @@ uv run main.py
 ### Workflow Example
 
 1. Copy several items normally using `Ctrl+C`
-2. Press `Ctrl+G` to open the clipboard overlay
-3. While holding `Ctrl`, press `G` repeatedly to cycle through items
+2. Press `Ctrl+Q` to open the clipboard overlay
+3. While holding `Ctrl`, press `Q` repeatedly to cycle through items
 4. Release `Ctrl` to paste the highlighted item
 5. The selected text is automatically pasted into your active application
 
@@ -194,7 +194,7 @@ Clipbuddy/
 
 ## License
 
-MIT License
+MIT License (c) 2025 Shahil Kumar. See [LICENSE](LICENSE) for details.
 
 
 ## Contributing

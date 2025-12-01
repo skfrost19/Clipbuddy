@@ -501,7 +501,7 @@ class SmartClipUI(QMainWindow):
         saved_settings = self.storage.load_settings()
 
         # Store current hotkey settings
-        self.swap_hotkey = saved_settings.get("swap_hotkey", "ctrl+g")
+        self.swap_hotkey = saved_settings.get("swap_hotkey", "ctrl+q")
         self.type_hotkey = saved_settings.get("type_hotkey", "")
         self.run_at_startup = saved_settings.get("run_at_startup", False)
         self.show_notifications = saved_settings.get("show_notifications", True)
@@ -514,7 +514,7 @@ class SmartClipUI(QMainWindow):
 
         # Track modifier key for the hotkey (e.g., "ctrl" from "ctrl+g")
         self.swap_modifier = "ctrl"
-        self.swap_key = "g"
+        self.swap_key = "q"
 
         # Overlay window reference
         self.overlay = None
