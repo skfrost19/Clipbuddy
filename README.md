@@ -1,154 +1,208 @@
-# SmartClip - Clipboard Manager
+# SmartClip
 
-A powerful clipboard manager with global hotkey support, system tray integration, and persistent history.
+A lightweight, cross-platform clipboard manager with global hotkey support, system tray integration, and persistent history.
 
 ## Features
 
-- 📋 **Clipboard History** - Automatically saves everything you copy
-- ⌨️ **Global Hotkeys** - Access clipboard history from anywhere (default: Ctrl+G)
-- 🔄 **Alt+Tab Style Cycling** - Hold Ctrl and press G repeatedly to cycle through items
-- 🔍 **Search** - Quickly find items in your clipboard history
-- 💾 **Persistent Storage** - History survives restarts
-- 🚀 **Run at Startup** - Optional auto-start with Windows/Linux
-- 📌 **System Tray** - Minimizes to tray, always accessible
+### Core Functionality
+- **Clipboard History**: Automatically captures and stores everything you copy
+- **Global Hotkeys**: Access your clipboard history from any application
+- **Alt+Tab Style Navigation**: Hold modifier key and press hotkey repeatedly to cycle through items
+- **Instant Paste**: Release the modifier key to paste the selected item immediately
+- **Search**: Quickly filter through your clipboard history
+
+### System Integration
+- **System Tray**: Runs quietly in the background, accessible from the system tray
+- **Run at Startup**: Optionally start with your operating system
+- **Persistent Storage**: Clipboard history survives application restarts and system reboots
+- **Cross-Platform**: Works on Windows and Linux
+
+### User Experience
+- **Dark Theme Overlay**: Clean, modern overlay interface
+- **Configurable Hotkeys**: Customize keyboard shortcuts to your preference
+- **Adjustable History Size**: Control how many items to keep in history
+- **Notification Control**: Toggle system notifications on or off
+
 
 ## Installation
 
-### From Source
+### Option 1: Download Pre-built Executable
 
-1. **Prerequisites:**
-   - Python 3.10 or higher
-   - [uv](https://github.com/astral-sh/uv) package manager (recommended)
+Download the latest release from the [Releases](https://github.com/skfrost19/Clipbuddy/releases) page:
+- Windows: `SmartClip.exe`
+- Linux: `SmartClip`
 
-2. **Clone and Install:**
-   ```bash
-   git clone https://github.com/skfrost19/Clipbuddy.git
-   cd Clipbuddy
-   uv sync
-   ```
+### Option 2: Run from Source
 
-3. **Run:**
-   ```bash
-   uv run main.py
-   ```
+**Prerequisites:**
+- Python 3.10 or higher
+- [uv](https://github.com/astral-sh/uv) package manager (recommended)
 
-### From Executable
+**Steps:**
 
-Download the pre-built executable from the [Releases](https://github.com/skfrost19/Clipbuddy/releases) page.
+```bash
+# Clone the repository
+git clone https://github.com/skfrost19/Clipbuddy.git
+cd Clipbuddy
 
-## Building Executables
+# Install dependencies
+uv sync
+
+# Run the application
+uv run main.py
+```
+
+
+## Usage
+
+### Default Hotkeys
+
+| Action | Hotkey |
+|--------|--------|
+| Open clipboard overlay | `Ctrl+G` |
+| Cycle to next item | `Ctrl+G` (while overlay is open) |
+| Paste selected item | Release `Ctrl` |
+| Close overlay | `Esc` |
+| Navigate items | Arrow keys |
+| Select and paste | `Enter` |
+
+### Workflow Example
+
+1. Copy several items normally using `Ctrl+C`
+2. Press `Ctrl+G` to open the clipboard overlay
+3. While holding `Ctrl`, press `G` repeatedly to cycle through items
+4. Release `Ctrl` to paste the highlighted item
+5. The selected text is automatically pasted into your active application
+
+### System Tray
+
+- **Single/Double click**: Show the main window
+- **Right-click menu**:
+  - Show Smart Clip: Open the main window
+  - Settings: Configure the application
+  - Exit: Close the application completely
+
+### Settings
+
+Access settings through the main window or system tray menu:
+
+| Setting | Description |
+|---------|-------------|
+| Run at startup | Launch SmartClip when your system starts |
+| Show notifications | Display tray notifications |
+| Swap hotkey | Global hotkey to open clipboard overlay |
+| Type hotkey | Alternative hotkey (optional) |
+| Clipboard stack size | Maximum number of items to store |
+
+
+## Building from Source
 
 ### Prerequisites
 
 ```bash
-# Install development dependencies (includes PyInstaller)
+# Install development dependencies
 uv sync --dev
 ```
 
-### Build for Your Platform
+### Build Commands
 
+**Simple build:**
 ```bash
-# Simple build (creates dist/SmartClip.exe on Windows or dist/SmartClip on Linux)
 uv run python build.py
+```
 
-# Clean build (removes old artifacts first)
+**Clean build (removes previous artifacts):**
+```bash
 uv run python build.py --clean
 ```
 
-### Alternative: Using PyInstaller Directly
-
+**Using PyInstaller directly:**
 ```bash
-# Using the spec file
 uv run pyinstaller SmartClip.spec
-
-# Or manual command
-uv run pyinstaller --name=SmartClip --onefile --windowed --clean main.py
 ```
 
-### Cross-Platform Building
+### Build Output
 
-**Note:** PyInstaller cannot cross-compile. You need to build on each target platform:
+| Platform | Output Location |
+|----------|-----------------|
+| Windows | `dist/SmartClip.exe` |
+| Linux | `dist/SmartClip` |
 
-| Platform | Build On | Output |
-|----------|----------|--------|
-| Windows | Windows | `dist/SmartClip.exe` |
-| Linux | Linux | `dist/SmartClip` |
-| macOS | macOS | `dist/SmartClip.app` |
+### Cross-Platform Notes
 
-#### Building on Linux
+PyInstaller cannot cross-compile. To build for a specific platform, you must build on that platform:
 
-```bash
-# Install dependencies
-sudo apt-get install python3-dev  # Debian/Ubuntu
-# or
-sudo dnf install python3-devel    # Fedora
+- Build Windows executable on Windows
+- Build Linux executable on Linux
 
-# Build
-uv sync --dev
-uv run python build.py
-```
-
-#### Building on Windows
-
-```powershell
-# Build
-uv sync --dev
-uv run python build.py
-```
-
-## Usage
-
-### Hotkeys
-
-| Hotkey | Action |
-|--------|--------|
-| `Ctrl+G` | Open clipboard overlay (default, customizable) |
-| `Ctrl+G` (hold Ctrl, press G again) | Cycle to next item |
-| Release `Ctrl` | Paste selected item |
-| `Esc` | Close overlay without pasting |
-| `Enter` | Paste selected item |
-| `↑` / `↓` | Navigate items |
-
-### System Tray
-
-- **Click/Double-click** tray icon to show window
-- **Right-click** for menu:
-  - Show Smart Clip
-  - Settings
-  - Exit
-
-### Settings
-
-Access via the "Settings" button or tray menu:
-
-- **Run at startup** - Launch automatically when system starts
-- **Show notifications** - Enable/disable tray notifications
-- **Swap hotkey** - Customize the global hotkey
-- **Clipboard stack size** - Maximum items to keep
 
 ## Data Storage
 
-Your data is stored in:
+SmartClip stores its data in platform-appropriate locations:
 
 | Platform | Location |
 |----------|----------|
 | Windows | `%APPDATA%\SmartClip\` |
 | Linux | `~/.config/SmartClip/` |
 
-Files:
-- `clipboard_history.json` - Your clipboard history
-- `settings.json` - Application settings
+**Files:**
+- `clipboard_history.json`: Your clipboard history
+- `settings.json`: Application configuration
+
 
 ## Requirements
 
 - Python 3.10+
 - PyQt6
-- keyboard (for global hotkeys)
+- keyboard
+
+Note: The `keyboard` library may require administrator/root privileges for global hotkeys to work system-wide.
+
+
+## Troubleshooting
+
+### Hotkeys not working
+
+- **Windows**: Try running the application as Administrator
+- **Linux**: Run with `sudo` or add your user to the `input` group
+
+### Application not starting at login
+
+- Verify the "Run at startup" option is enabled in Settings
+- **Windows**: Check `HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run` in Registry Editor
+- **Linux**: Check `~/.config/autostart/SmartClip.desktop`
+
+### Clipboard not being captured
+
+- Ensure the application is running (check system tray)
+- Some applications use non-standard clipboard mechanisms that may not be captured
+
+
+## Project Structure
+
+```
+Clipbuddy/
+├── main.py              # Main application source
+├── build.py             # Build script for creating executables
+├── SmartClip.spec       # PyInstaller configuration
+├── icon.png             # Application icon
+├── README.md            # This file
+├── pyproject.toml       # Project dependencies
+└── dist/                # Built executables (after building)
+```
+
 
 ## License
 
 MIT License
 
+
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome. Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request

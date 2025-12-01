@@ -491,6 +491,9 @@ class SmartClipUI(QMainWindow):
         self.setWindowTitle("Smart Clip")
         self.resize(500, 600)
 
+        # Set window icon
+        self.set_window_icon()
+
         # Initialize storage
         self.storage = ClipboardStorage()
 
@@ -715,8 +718,23 @@ class SmartClipUI(QMainWindow):
         self.tray_icon.show()
 
     def create_tray_icon(self):
-        """Create a simple tray icon programmatically."""
-        # Create a 32x32 pixmap
+        """Create tray icon from file or programmatically."""
+        # Try to load icon from file
+        icon_paths = [
+            Path(__file__).parent / "icon.png",  # Same directory as script
+            Path(sys.executable).parent / "icon.png",  # Same directory as exe
+            Path("icon.png"),  # Current working directory
+        ]
+
+        # For frozen executable, also check _MEIPASS
+        if getattr(sys, "frozen", False):
+            icon_paths.insert(0, Path(sys._MEIPASS) / "icon.png")
+
+        for icon_path in icon_paths:
+            if icon_path.exists():
+                return QIcon(str(icon_path))
+
+        # Fallback: Create icon programmatically
         pixmap = QPixmap(32, 32)
         pixmap.fill(QColor("transparent"))
 
@@ -749,6 +767,22 @@ class SmartClipUI(QMainWindow):
         self.show()
         self.raise_()
         self.activateWindow()
+
+    def set_window_icon(self):
+        """Set the window icon from file."""
+        icon_paths = [
+            Path(__file__).parent / "icon.png",
+            Path(sys.executable).parent / "icon.png",
+            Path("icon.png"),
+        ]
+
+        if getattr(sys, "frozen", False):
+            icon_paths.insert(0, Path(sys._MEIPASS) / "icon.png")
+
+        for icon_path in icon_paths:
+            if icon_path.exists():
+                self.setWindowIcon(QIcon(str(icon_path)))
+                return
 
     def on_tray_activated(self, reason):
         """Handle tray icon activation."""
