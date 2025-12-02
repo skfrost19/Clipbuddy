@@ -106,23 +106,15 @@ jobs:
           
           # Check if running as root
           if [ "$EUID" -ne 0 ]; then
-              # Try pkexec for graphical sudo
-              if command -v pkexec &> /dev/null; then
-                  exec pkexec env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY \
-                      PATH="$PATH" LD_LIBRARY_PATH="$LD_LIBRARY_PATH" \
-                      XDG_DATA_DIRS="$XDG_DATA_DIRS" \
-                      "${HERE}/usr/bin/SmartClip" "$@" &>/dev/null &
-              else
-                  # Fallback message
-                  echo "SmartClip requires root privileges for global hotkeys."
-                  echo "Please run with: sudo $0"
-                  exit 1
-              fi
-          else
-              # Already root, run detached from terminal
-              nohup "${HERE}/usr/bin/SmartClip" "$@" &>/dev/null &
+              echo "SmartClip requires root privileges for global hotkeys."
+              echo "Please run with: sudo $SELF"
+              echo ""
+              echo "To run in background: sudo $SELF &"
+              exit 1
           fi
-          disown 2>/dev/null
+          
+          # Run the app (use & to background if desired)
+          exec "${HERE}/usr/bin/SmartClip" "$@"
           APPRUN
           chmod +x appimage_build/SmartClip.AppDir/AppRun
 
