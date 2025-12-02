@@ -8,25 +8,30 @@ on:
 
 jobs:
   build-linux:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:18.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-
-      - name: Install dependencies
+      - name: Install system dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y libxcb-cursor0 libxkbcommon-x11-0 libxcb-icccm4 libxcb-keysyms1 libxcb-shape0 wget fuse
-          pip install PyQt6 keyboard pyinstaller
+          apt-get update
+          apt-get install -y software-properties-common
+          add-apt-repository -y ppa:deadsnakes/ppa
+          apt-get update
+          apt-get install -y python3.10 python3.10-venv python3.10-dev python3-pip wget fuse libfuse2 file
+          apt-get install -y libxcb-cursor0 libxkbcommon-x11-0 libxcb-icccm4 libxcb-keysyms1 libxcb-shape0
+          apt-get install -y libxcb-xinerama0 libxcb-render-util0 libxcb-xfixes0 libxcb-xkb1 libxkbcommon0
+          apt-get install -y libgl1-mesa-glx libegl1-mesa libxcb-image0
+          update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 1
+          python3.10 -m pip install --upgrade pip
+          python3.10 -m pip install PyQt6 keyboard pyinstaller
 
       - name: Build with PyInstaller
         run: |
-          pyinstaller --clean --noconfirm SmartClip.spec
+          python3.10 -m PyInstaller --clean --noconfirm SmartClip.spec
 
       - name: Download appimagetool
         run: |
