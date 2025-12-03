@@ -169,6 +169,112 @@ class ClipboardItemDelegate(QStyledItemDelegate):
         painter.restore()
 
 
+# ============== Copy Notification Overlay ==============
+class CopyNotificationOverlay(QWidget):
+    """A small overlay that appears in the bottom-right corner when text is copied."""
+
+    def __init__(self, text, parent=None):
+        super().__init__(None)
+
+        # Frameless, always on top, tool window (no taskbar entry)
+        self.setWindowFlags(
+            Qt.WindowType.FramelessWindowHint
+            | Qt.WindowType.WindowStaysOnTopHint
+            | Qt.WindowType.Tool
+            | Qt.WindowType.WindowDoesNotAcceptFocus
+        )
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, False)
+        self.setAttribute(Qt.WidgetAttribute.WA_ShowWithoutActivating, True)
+
+        self.setup_ui(text)
+        self.position_on_screen()
+
+        # Auto-close after 2 seconds
+        self.close_timer = QTimer(self)
+        self.close_timer.setSingleShot(True)
+        self.close_timer.timeout.connect(self.close)
+        self.close_timer.start(2000)
+
+    def setup_ui(self, text):
+        self.setFixedSize(320, 70)
+
+        layout = QHBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+
+        # Container with styling
+        container = QWidget()
+        container.setStyleSheet("""
+            QWidget {
+                background-color: #2d2d2d;
+                border: 1px solid #404040;
+                border-radius: 6px;
+            }
+        """)
+        container_layout = QHBoxLayout(container)
+        container_layout.setContentsMargins(12, 10, 12, 10)
+        container_layout.setSpacing(12)
+
+        # Clipboard icon
+        icon_label = QLabel("📋")
+        icon_label.setStyleSheet(
+            "font-size: 24px; background: transparent; border: none;"
+        )
+        icon_label.setFixedWidth(32)
+        container_layout.addWidget(icon_label)
+
+        # Text content
+        text_container = QVBoxLayout()
+        text_container.setSpacing(2)
+
+        title = QLabel("Copied to clipboard")
+        title.setStyleSheet(
+            "color: #ffffff; font-weight: bold; font-size: 11px; background: transparent; border: none;"
+        )
+        text_container.addWidget(title)
+
+        # Preview of copied text (truncated)
+        preview_text = text.replace("\n", " ").strip()
+        if len(preview_text) > 40:
+            preview_text = preview_text[:40] + "..."
+
+        preview = QLabel(preview_text)
+        preview.setStyleSheet(
+            "color: #aaaaaa; font-size: 10px; background: transparent; border: none;"
+        )
+        text_container.addWidget(preview)
+
+        container_layout.addLayout(text_container)
+        container_layout.addStretch()
+
+        # Close button
+        close_btn = QPushButton("×")
+        close_btn.setFixedSize(20, 20)
+        close_btn.setStyleSheet("""
+            QPushButton {
+                background: transparent;
+                border: none;
+                color: #888888;
+                font-size: 16px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                color: #ffffff;
+            }
+        """)
+        close_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        close_btn.clicked.connect(self.close)
+        container_layout.addWidget(close_btn)
+
+        layout.addWidget(container)
+
+    def position_on_screen(self):
+        """Position the overlay in the bottom-right corner of the screen."""
+        screen = QGuiApplication.primaryScreen().availableGeometry()
+        x = screen.right() - self.width() - 20
+        y = screen.bottom() - self.height() - 20
+        self.move(x, y)
+
+
 # ============== Startup Manager ==============
 class StartupManager:
     """Manages run-at-startup functionality for Windows and Linux."""
@@ -671,6 +777,9 @@ class SmartClipUI(QMainWindow):
         # Overlay window reference
         self.overlay = None
 
+        # Copy notification overlay reference
+        self.copy_notification = None
+
         # central widget setup
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
@@ -932,12 +1041,29 @@ class SmartClipUI(QMainWindow):
             )
             self.list_widget.insertItem(0, new_item)
 
+            # Show copy notification
+            self.show_copy_notification(text)
+
             # Trim to max size
             while self.list_widget.count() > self.max_stack_size:
                 self.list_widget.takeItem(self.list_widget.count() - 1)
 
             # Auto-save
             self.save_clipboard_history()
+
+    def show_copy_notification(self, text):
+        """Show a brief overlay notification when something is copied."""
+        if self.show_notifications:
+            # Close existing notification if any
+            if (
+                hasattr(self, "copy_notification")
+                and self.copy_notification is not None
+            ):
+                self.copy_notification.close()
+
+            # Show new notification overlay
+            self.copy_notification = CopyNotificationOverlay(text)
+            self.copy_notification.show()
 
     def closeEvent(self, event):
         """Called when window close button is clicked - minimize to tray."""
