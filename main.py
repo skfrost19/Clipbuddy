@@ -99,11 +99,11 @@ class StartupManager:
             if exe_path.endswith(".py"):
                 python_exe = sys.executable.replace("python.exe", "pythonw.exe")
                 if os.path.exists(python_exe):
-                    exe_path = f'"{python_exe}" "{exe_path}"'
+                    exe_path = f'"{python_exe}" "{exe_path}" --minimized'
                 else:
-                    exe_path = f'"{sys.executable}" "{exe_path}"'
+                    exe_path = f'"{sys.executable}" "{exe_path}" --minimized'
             else:
-                exe_path = f'"{exe_path}"'
+                exe_path = f'"{exe_path}" --minimized'
 
             key = winreg.OpenKey(
                 winreg.HKEY_CURRENT_USER, key_path, 0, winreg.KEY_SET_VALUE
@@ -166,7 +166,9 @@ class StartupManager:
 
             # If running as script, use python to run
             if exe_path.endswith(".py"):
-                exe_path = f"{sys.executable} {exe_path}"
+                exe_path = f"{sys.executable} {exe_path} --minimized"
+            else:
+                exe_path = f"{exe_path} --minimized"
 
             content = f"""[Desktop Entry]
 Type=Application
@@ -1022,6 +1024,12 @@ if __name__ == "__main__":
     app.setStyle("Fusion")
 
     window = SmartClipUI()
-    window.show()
+    
+    # Check if --minimized flag is passed or if run at startup is enabled
+    if "--minimized" in sys.argv or window.run_at_startup:
+        # Start minimized to tray
+        window.hide()
+    else:
+        window.show()
 
     sys.exit(app.exec())
