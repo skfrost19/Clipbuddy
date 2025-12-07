@@ -2,6 +2,8 @@
 
 A lightweight, cross-platform clipboard manager with global hotkey support, system tray integration, and persistent history.
 
+Made with ❤️ using AI (Claude Sonnet 4.5).
+
 ## Features
 
 ### Core Functionality
